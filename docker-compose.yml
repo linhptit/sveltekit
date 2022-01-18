@@ -1,0 +1,52 @@
+version: '3.6'
+services:
+  svelte-db:
+      image: postgres:13.3
+      container_name: 'clientDb'
+      ports:
+      - "5432:5432"
+      environment:
+        POSTGRES_PASSWORD: "postgres"
+        POSTGRES_USER: "postgres"
+      volumes:
+        - .data/postgres:/var/lib/postgresql/data
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  postgres:
+    image: postgres:12
+    container_name: 'adminDb'
+    restart: always
+    volumes:
+    - .data/hasura_postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+  graphql-engine:
+      image: hasura/graphql-engine:v2.1.1.cli-migrations-v3
+      ports:
+      - "8080:8080"
+      restart: always
+      depends_on:
+      - "postgres"
+      # volumes:
+      # - /Users/linhnv/side-project/svelte/docker/hasura/metadata:/hasura-metadata
+      # - /Users/linhnv/side-project/svelte/docker/hasura/migrations:/hasura-migrations
+      environment:
+        ## postgres database to store Hasura metadata
+        HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+        ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
+        PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+        ## enable the console served by server
+        HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+        ## enable debugging mode. It is recommended to disable this in production
+        HASURA_GRAPHQL_DEV_MODE: "true"
+        HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+        ## uncomment next line to set an admin secret
+        # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+        # HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
+        # HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
+  remote-resolver:
+    build: docker/remote-resolver
+    container_name: "remote-resolver"
+    ports:
+    - "3000:3000"
+volumes:
+  .data:
