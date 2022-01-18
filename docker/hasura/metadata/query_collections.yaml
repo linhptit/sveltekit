@@ -1,1 +1,20 @@
-[]
+- name: allowed-queries
+  definition:
+    queries:
+    - name: getLongTailByTail
+      query: |-
+        query getLongTailByTail($tail: String) {
+          long_tails(where: {tail: {_eq: $tail}}) {
+            tail
+            json_id
+          }
+        }
+    - name: getLongTailByTailCus
+      query: |-
+        query getLongTailByTailCus($tail: String){
+          getLongTailByTailCus(tail: $tail) {
+            id,
+            title,
+            description
+          }
+        }

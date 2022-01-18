@@ -1,1 +1,18 @@
-[]
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: getLongTailByTailCus
+  url: long-tail-by-tail-cus/:tail
+  methods:
+  - GET
+  name: getLongTailByTailCus
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: getLongTailByTail
+  url: long-tail-by-tail/:tail
+  methods:
+  - GET
+  name: getLongTailByTail
+  comment: null

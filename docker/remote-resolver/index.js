@@ -1,61 +1,45 @@
 const { ApolloServer } = require('apollo-server');
 const gql = require('graphql-tag');
 const axios = require('axios');
-
+const { isEmpty } = require('lodash')
+const data = require('./data.json')
 
 const typeDefs = gql`
   type LongTail {
-     id: String
-     tail: String
+     id: Int
+     title: String
+     description: String
   }
   type Query {
-    getLongTails1: String
+    getLongTailByTailCus(tail: String): LongTail,
   }
 `;
 
 
-const data = [
-    {
-        "id": 1,
-        "title": "Svelte",
-        "description": "A JavaScript Front End Framework"
-    },
-    {
-        "id": 2,
-        "title": "Postgres",
-        "description": "An open-source SQL database"
-    },
-    {
-        "id": 3,
-        "title": "Hasura",
-        "description": "An auto-generated GraphQL API"
-    }
-]
-
-function getLongTails() {
-  return axios.get(`http://host.docker.internal:8080/api/rest/long-tails`);
+function getLongTails(tail) {
+  return axios.get(`http://host.docker.internal:8080/api/rest/long-tail-by-tail/${tail}`);
 }
-
 
 const resolvers = {
     Query: {
-        getLongTails1: () => {
-            return getLongTails().then((res) => {
-                const customData = res.data.long_tails.map(longTail => {
-                    const tail = data.find(i => i.id === longTail.json_id)
-                    return {
-                        ...longTail,
-                        ...tail
-                    }
-                })
-                return JSON.stringify(customData)
+        getLongTailByTailCus: (_, { tail }) => {
+            console.log(tail)
+            return getLongTails(tail).then((res) => {
+                const customData = res.data.long_tails
+                if (isEmpty(customData)) return undefined
+                const longTail = customData[0]
+
+                return {
+                    ...longTail,
+                    ...data.find(i => i.id === longTail.json_id)
+                }
             })
-        }
+        },
     }
 };
 
 const schema = new ApolloServer({ typeDefs, resolvers });
 
-schema.listen({ port: 3000}).then(({ url }) => {
+schema.listen({ port: 3001}).then(({ url }) => {
     console.log(`schema ready at ${url}`);
 });
