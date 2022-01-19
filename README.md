@@ -1,10 +1,12 @@
-# Challenge
-Resolve challenge from https://gist.github.com/joanrodriguez/00b2c4ccb2534d5ce8e28560c72d8566
 ## Tech
 
 - [Hasura] - graphql
 - [postgres] - Database
 - [nextjs | sveltekit] - Client Platform
+
+## Release
+- release/v0.1.0: approach with Remote Schemas
+- release/v0.2.0: approach with Actions
 
 
 ## Installation

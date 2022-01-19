@@ -11,10 +11,10 @@
         }
     - name: getLongTailByTailCus
       query: |-
-        query getLongTailByTailCus($tail: String){
+        mutation getLongTailByTailCus($tail: String!) {
           getLongTailByTailCus(tail: $tail) {
-            id,
-            title,
+            id
+            title
             description
           }
         }

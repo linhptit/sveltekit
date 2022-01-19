@@ -1,8 +1,8 @@
 version: '3.6'
 services:
-  svelte-db:
+  svelte-example-db:
       image: postgres:13.3
-      container_name: 'clientDb'
+      container_name: 'svelte-example-db'
       ports:
       - "5432:5432"
       environment:
@@ -11,9 +11,9 @@ services:
       volumes:
         - .data/postgres:/var/lib/postgresql/data
         - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-  postgres:
+  hasura-db:
     image: postgres:12
-    container_name: 'adminDb'
+    container_name: 'hasuraDB'
     restart: always
     volumes:
     - .data/hasura_postgres:/var/lib/postgresql/data
@@ -26,15 +26,15 @@ services:
       - "8080:8080"
       restart: always
       depends_on:
-      - "postgres"
+      - "hasura-db"
       volumes:
-       - /Users/linhnv/side-project/svelte/docker/hasura/metadata:/hasura-metadata
-       - /Users/linhnv/side-project/svelte/docker/hasura/migrations:/hasura-migrations
+       - ./docker/hasura/metadata:/hasura-metadata
+       - ./docker/hasura/migrations:/hasura-migrations
       environment:
         ## postgres database to store Hasura metadata
-        HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+        HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@hasura-db:5432/postgres
         ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
-        PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+        PG_DATABASE_URL: postgres://postgres:postgrespassword@hasura-db:5432/postgres
         ## enable the console served by server
         HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
         ## enable debugging mode. It is recommended to disable this in production
@@ -44,11 +44,11 @@ services:
         # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
         # HASURA_GRAPHQL_METADATA_DIR: /hasura-metadata
         # HASURA_GRAPHQL_MIGRATIONS_DIR: /hasura-migrations
-  remote-resolver:
-    build: docker/remote-resolver
-    container_name: "remote-resolver"
-    ports:
-    - "3001:3001"
+  action-sever:
+      build: docker/action-sever-express
+      container_name: "action-sever"
+      ports:
+          - "5001:5001"
   client:
     build: docker/client
     container_name: "client-app"
@@ -56,3 +56,4 @@ services:
       - "3000:3000"
 volumes:
   .data:
+  docker:

@@ -1,0 +1,12 @@
+type Mutation {
+  getLongTailByTailCus(
+    tail: String!
+  ): LongTail
+}
+
+type LongTail {
+  id: Int!
+  title: String
+  description: String
+}
+

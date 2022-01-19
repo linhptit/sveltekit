@@ -1,5 +1,0 @@
-- name: CustomReponseLongTail
-  definition:
-    url: http://host.docker.internal:3001
-    timeout_seconds: 60
-  comment: ""
