@@ -6,6 +6,10 @@ Resolve challenge from https://gist.github.com/joanrodriguez/00b2c4ccb2534d5ce8e
 - [postgres] - Database
 - [nextjs | sveltekit] - Client Platform
 
+## Release
+- release/v0.1.0: approach with Remote Schemas
+- release/v0.1.1: in-progress
+
 
 ## Installation
 Setup on local
