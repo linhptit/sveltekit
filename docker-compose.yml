@@ -49,6 +49,11 @@ services:
     container_name: "remote-resolver"
     ports:
     - "3001:3001"
+  action-sever:
+      build: docker/action-sever-express
+      container_name: "action-sever"
+      ports:
+          - "5001:5001"
   client:
     build: docker/client
     container_name: "client-app"
